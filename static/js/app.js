@@ -3,6 +3,7 @@ function buildMetadata(sample) {
   d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json")
     .then((data) => {
       console.log(data); // log the entire data object
+      console.log(Plotly); // log the Plotly object
 
     // get the metadata field
     let metadata = data.metadata;
@@ -17,7 +18,9 @@ d3.select("#sample-metadata").html("");
 
     // Inside a loop, you will need to use d3 to append new
     // tags for each key-value in the filtered metadata.
-Object.entries(resultArray[0]).forEach(([key, value]) => {
+    Object.entries(resultArray[0]).forEach(([key, value]) => {
+      d3.select("#sample-metadata").append("p").text(`${key}: ${value}`);
+    });
   });
 }
 
@@ -45,7 +48,8 @@ let bubbleData = [{
     size: sample_values,
     color: otu_ids,
     colorscale: 'Earth'
-  }],
+  }
+}];
 let layout = {
   title: 'Bacteria Cultures per Sample',
   xaxis: { title: 'OTU ID' },
@@ -53,8 +57,10 @@ let layout = {
   showlegend: false
 };
 
+console.log(bubbleData, layout);
     // Render the Bubble Chart
-plotly.newPlot('bubble', bubbleData, layout);
+    Plotly.newPlot('bubble', bubbleData, layout);
+
 
     // For the Bar Chart, map the otu_ids to a list of strings for your yticks
 
@@ -77,12 +83,14 @@ let barLayout = {
 
 
     // Render the Bar Chart
-plotly.newPlot('bar', barData, barLayout);
+Plotly.newPlot('bar', barData, barLayout);
   });
 }
 
 // Function to run on page load
 function init() {
+  console.log('init function called'); // log that the init function was called
+
   d3.json("https://static.bc-edx.com/data/dl-1-2/m14/lms/starter/samples.json").then((data) => {
 
     // Get the names field
@@ -95,13 +103,18 @@ d3.select("#selDataset");
     // Hint: Inside a loop, you will need to use d3 to append a new
     // option for each sample name.
 Object.entries(names).forEach(([key, value]) => {
-  }
+      d3.select("#selDataset").append("option").text(value).property("value", value);
+    });
+
 
     // Get the first sample from the list
 let firstName = names[0];
     // Build charts and metadata panel with the first sample
-buildCharts(firstSample);
-buildMetadata(firstSample);
+    let firstSample = names[0];
+
+    // Build charts and metadata panel with the first sample
+    buildCharts(firstSample);
+    buildMetadata(firstSample);
   });
 }
 
@@ -114,3 +127,4 @@ buildMetadata(newSample);
 
 // Initialize the dashboard
 init();
+console.log('JavaScript file loaded');
